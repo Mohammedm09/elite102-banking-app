@@ -131,7 +131,3 @@ while True:
             print("Invalid choice. Please enter 'deposit', 'withdraw', 'check balance', or 'sign out'.")
 
 conn.close()
-
-  
-
-#allow user to see all accounts
