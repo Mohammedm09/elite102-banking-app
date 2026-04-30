@@ -55,14 +55,12 @@ while True:
                         current_user = new_username
                         break
                     else:
-                        print("Username already exists. Please choose a different username.")
-                    
+                        print("Username already exists. Please choose a different username.")  
             elif choice.lower() == "sign in":
                 while logged_in == False:
                     print("Signing in to an existing account...")
                     username = input("Enter your username: ")
                     password = input("Enter your password: ")
-
                     if password_matches(username, password):
                         print("Password matches! You are now signed in.")
                         logged_in = True
@@ -77,13 +75,19 @@ while True:
                 exit()
 
             # Code to sign in would go here
-            else:
-                print("Invalid choice. Please enter 'create' or 'sign in'.")
+
 
     while logged_in:
+        print(f"\n--- {current_user}'s Dashboard ---")
         step1 = input("What would you like to do? (deposit, withdraw, check balance, delete account, change password, check all accounts, or sign out) ")
-        if step1.lower() == "deposit":
+        if step1.lower() == "check balance":
+            cursor.execute("SELECT balance FROM accounts WHERE username = ?", (current_user,))
+            balance = cursor.fetchone()[0]
+            print(f"Your current balance is: ${balance:.2f}")
+        elif step1.lower() == "deposit":
             amount = float(input("Enter the amount to deposit: "))
+            if amount != int:
+                print("Please enter a number ")
             cursor.execute("UPDATE accounts SET balance = balance + ? WHERE username = ?", (amount, current_user))
             conn.commit()
             print(f"Deposited ${amount:.2f} successfully.")
@@ -93,14 +97,12 @@ while True:
             balance = cursor.fetchone()[0]
             if amount > balance:
                 print("Insufficient funds. Withdrawal failed.")
+            elif amount != int:
+                print("Please enter a number ")
             else:
                 cursor.execute("UPDATE accounts SET balance = balance - ? WHERE username = ?", (amount, current_user))
                 conn.commit()
                 print(f"Withdrew ${amount:.2f} successfully.")
-        elif step1.lower() == "check balance":
-            cursor.execute("SELECT balance FROM accounts WHERE username = ?", (current_user,))
-            balance = cursor.fetchone()[0]
-            print(f"Your current balance is: ${balance:.2f}")
         elif step1.lower() == "sign out":
             print("Signing out...")
             logged_in = False
@@ -130,4 +132,4 @@ while True:
         else:
             print("Invalid choice. Please enter 'deposit', 'withdraw', 'check balance', or 'sign out'.")
 
-conn.close()
+    conn.close()
